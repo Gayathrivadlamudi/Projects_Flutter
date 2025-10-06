@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
-void main(){
+// import 'package:firebase_core/firebase_core.dart';      // Important import
+// import 'package:firebase_messaging/firebase_messaging.dart'; //it is for notifcations
+void main() async{
+   WidgetsFlutterBinding.ensureInitialized();  // Ensure bindings are ready this makes sures that flutter is fully ready before doing anything else
+  // await Firebase.initializeApp();   //this connects our app to firebase project
+  // FirebaseMessaging messaging=FirebaseMessaging.instance;//this creates a firebasemessaging instance which helps us to work with notifications
+  // await messaging.requestPermission;//we need to ask explicity user for permisions to send notifications 
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message){
+  //   print("notification recieved: ${message.notification?.title}-${message.notification?.body}");
+  //onMessage.listen it listens to the message while the app is open 
+  //REmoteMessage is the notification info reming tile and body are the actual information
   runApp(MaterialApp(home:caluclator()));
 }
 class caluclator extends StatefulWidget{
@@ -31,7 +41,6 @@ class _caluclatorState extends State<caluclator>{
         blurRadius: 8,                        // makes shadow softer
         spreadRadius: 2,   )]
           ),
-          
           child: Column(
             children: [
             Padding(padding: EdgeInsets.only(top:50,left:12,right: 12,bottom: 14),
@@ -71,7 +80,6 @@ class _caluclatorState extends State<caluclator>{
                  });
               }, child: Text("Convert",style: TextStyle(color: Colors.white,fontSize:21),)),
                )
-              
             ],
           ),
         ): Container(
@@ -83,10 +91,10 @@ class _caluclatorState extends State<caluclator>{
             borderRadius: BorderRadius.circular(23),
             boxShadow:[ 
               BoxShadow( color: Colors.black, // semi-transparent shadow
-        offset: Offset(10,10),   //positive means right and bottom and -ve means left and top              // moves shadow to bottom-right
-        blurRadius: 8,                        // makes shadow softer
-        spreadRadius: 2,   )]
-          ),
+            offset: Offset(10,10),   //positive means right and bottom and -ve means left and top              // moves shadow to bottom-right
+            blurRadius: 8,                        // makes shadow softer
+            spreadRadius: 2,   )]
+              ),
           child:Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

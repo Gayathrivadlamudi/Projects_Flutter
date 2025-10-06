@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "554423633169",
+    "project_id": "caluclator-7a2b3",
+    "storage_bucket": "caluclator-7a2b3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:554423633169:android:7f6ce41ed3969a77d7b8b0",
+        "android_client_info": {
+          "package_name": "com.example.projects_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIP8w5cPiduljOlNFK-PgpY-C-TI_Z17Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

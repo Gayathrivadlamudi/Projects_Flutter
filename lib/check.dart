@@ -1,70 +1,41 @@
+//Every url in web api is designed for a specific purpose 
+//that is if there is login url when we send post request it will check the credentials and helps us to login 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:projects_flutter/SchoolNameSearch.dart';
-import 'ToDoApp.dart';
-import 'package:get/get.dart';
+import "dart:convert";
+import 'package:http/http.dart' as http;
 void main(){
-  runApp(GetMaterialApp(
+  runApp(MaterialApp(
     debugShowCheckedModeBanner:false,
-    home:SchoolLogin(img:"",name: "",),
+    home:SchoolLogin(),
   ));
 }
 class SchoolLogin extends StatefulWidget{
-  final String img;
-  final String name;
-  const SchoolLogin({super.key,required this.img,required this.name});
+  const SchoolLogin({super.key,});
   @override
   _SchoolLoginState createState()=>_SchoolLoginState();
 }
-class _SchoolLoginState extends State<SchoolLogin>{
-  
+class _SchoolLoginState extends State<SchoolLogin>{  
   final _formKey=GlobalKey<FormState>();
   TextEditingController usercontroller=TextEditingController();
   TextEditingController passcontroller=TextEditingController();
   bool obscure_text=true;
   bool? valueOne=false;
-  Widget? i;
   @override
   void initState(){
     super.initState();
-    setState((){
-    //  String encodedUrl=Uri.encodeFull(widget.img);
-    // Widget i=Image.network(encodedUrl,fit:BoxFit.cover,
-  //   errorBuilder: (context,error,StackTrace){
-  //     return Container(
-  //       color: Colors.grey[200],
-  //       child:Icon(Icons.school),
-  //     );
-  //   },);
-  });
-
   }
   @override
   Widget build(BuildContext context){
-    int ind=(widget.name).indexOf("(");
-    String editedName="";
-    if(ind!=-1){
-     editedName=(widget.name).substring(0,ind);
-    }
     return Scaffold(
       backgroundColor: Colors.white,
       body:Column(
         children: [
           SizedBox(height: 23,),
-       Align(alignment: Alignment.topLeft,
-        child: Padding(padding: EdgeInsets.all(16.0),
-        child: IconButton(onPressed: (){
-          Get.to(()=>SchoolNameSearch());
-        }, icon: Icon(Icons.arrow_back,
-        color: Colors.black,
-        size: 28,)),),),
           Container(
             height: 274,
-             child:Image.asset("assets/littlec.jpeg",
-             fit: BoxFit.cover,),
-           
+             child:Image.asset("assets/littlec.jpeg"),
           ),
-          Center(child: Text(editedName,
+          Center(child: Text("Arohona Foundation",
           style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16,
           fontFamily: "Karla"),
           ),),
@@ -149,17 +120,9 @@ class _SchoolLoginState extends State<SchoolLogin>{
                       SizedBox(height: 7,),
                       TextFormField(
                          controller: usercontroller,
-                        //  keyboardType: TextInputType.emailAddress,
-              // inputFormatters: [
-              //   FilteringTextInputFormatter.allow(
-              //   // RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$')
-              //     RegExp(r'[\w@.-]'),
-              //   ),
-              // ],
-                        decoration: InputDecoration(
+                         keyboardType: TextInputType.emailAddress,
+                           decoration: InputDecoration(
                           prefixIcon: Icon(Icons.person_2_outlined),
-                          // labelText: "Username/Email",
-                          // floatingLabelBehavior: FloatingLabelBehavior.always,
                           filled: true,
                           fillColor: Colors.white,
                           enabledBorder: OutlineInputBorder(
@@ -179,15 +142,12 @@ class _SchoolLoginState extends State<SchoolLogin>{
                             borderRadius: BorderRadius.circular(14)
                           ),
                         ),
-                        // validator: (value){
-                        //   if(value==null || value.isEmpty){
-                        //     return "Please Enter Email";
-                        //   }
-                        //    else if (!RegExp(r'^[\w.-]+@([\w-]+\.)+[\w]{2,4}$').hasMatch(value)) {
-                        //         return "Enter a valid email address";
-                        //         }
-                        //     return null;
-                        // },
+                        validator: (value){
+                          if(value==null || value.isEmpty){
+                            return "Please Enter Email";
+                          }
+                            return null;
+                        },
                       )
                     ],
                   ),
@@ -224,7 +184,7 @@ class _SchoolLoginState extends State<SchoolLogin>{
                         ),
                         validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "Please enter password";
+                             return "please enter password";
                             }
                             return null;
                           },
@@ -247,7 +207,6 @@ class _SchoolLoginState extends State<SchoolLogin>{
                         borderRadius: BorderRadius.circular(5)
                       ),
                       ),
-                      // SizedBox(width: 7,),
                       Text("Remember me",
                       style: TextStyle(color: Colors.deepOrange,
                       fontSize: 14,
@@ -265,39 +224,40 @@ class _SchoolLoginState extends State<SchoolLogin>{
                         foregroundColor: Colors.white,
                         backgroundColor: Colors.deepOrange,
                       ),
-                      onPressed: () {
-  if(usercontroller.text == "Gayathri Chowdary" && passcontroller.text == "12345678") {
-    showsnackbar(context);
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ToDoApp(),
-          // builder: (context) => ToDoApp(Name: usercontroller.text),
-        ),
-      );
-    });
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Invalid Username or Password")),
-    );
-  }
-},
-
-                    //   onPressed: (){
-                    //     // if(_formKey.currentState!.validate()){
-                    // if(usercontroller.text=="Gayathri Chowdary" && passcontroller.text=="12345678"){
-                    //    showsnackbar(context);
-                    //    Future.delayed(Duration(seconds: 1),(){
-                    //      Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                    //         ToDoApp(Name:usercontroller.text),
-                    //      ));
-                    //    });
-                    // }
-                    // },
-                    // },
+                      onPressed: () async{
+                        if(_formKey.currentState!.validate()){
+                              final url = Uri.parse(
+                                  "https://devparentapi.myclassboard.com/api/Mobile_API_/chkMobileLogin");
+                             try {
+                          final response = await http.post(
+                            url,
+                            headers: {
+                              "Content-Type": "application/json",
+                              "Accept": "application/json"
+                            },
+                            body: jsonEncode({"data":"2OM0t8cmKUXLjc+jKh9BdAbBw1BCosB2YGxyfBEQRR+P52awk6xUyLyILvAlxpMqwHgmN7eReSImN98sd4ED7qxfxSz8VSA+y3adcRQoBF8t2jz33Rc1sluJ5gHMtuCYShtcEaRkf431P2PBGO1WFZQ9leQqGLGu7FTKrll38qeqPEuf0zQbdPjMESWdDGbRNMYfuNCQjW2LeCBtMxD0S79deAFJIS0kJdVNCk7P+FnFK4LAN3qzZcXNAVtzUo6Q3ordoaD0O2zljEjHU+gJk1jk2/rsoBdedHy5lRWslGLd9uEU+DjL1iZ7uxSZVrc8aA7c4PTAfclwF0tVFqbXgpZoAWYmgx/fC2LKTpNCMbrVuMFXDcG/XlZDUee/vZF1VpMvPDWcrB+wFLmbwqoWLllGqUSsv0sEs3DLlvYYyfdsNvVl2MvQEZWnHbvCZJsahqtM3pnvqhuUDCYhRBbxUaQDf3WV7Jgg+hGNXmTM/Bw8xxp9nj0giCl0tHytvA/sCmmPqi7sXXzsQbDXw3PqbKoKPgwhlcPSOifB7O33nFpbsOQnzgg3+8SP4/YnMxRk2Gm5kJT8bI34yNRwX0ydzMwr2R8ykX/7rsPHE0IcpotZnar6WapaTnEtuRSdYyZ2e7UiIe+e8+8+jRU7Is1O5SHb/Tzujj6UQRqcDrUSUVs4+iyLahNBcRljmoxq/Ccx8YfR9mG59bsgvc+8PLsbo7JBY20n6+v+HLW+DSd8qhBgqIU3/H+gtjSWID94lqci+3XRB1idDVwUfAe0N1okkUB3vkh+S312uxHv8KmoYPtBg063Dd7cY23GF1vMG9zX+f5a1YTMN12hDCNFiri+pHQP27Y+/fOwZyOcO9j7hRRF0BrR60tg3iqYnzLGpH0GVmSqhIDRxJV0x5MNafoYHRuwVek6QIXZhhTGN5eEn6u8HVB7kszAw8Z/1cEyGZR7"}),
+                          );
+                          print("Status: ${response.statusCode}");
+                          print("Body: ${response.body}");
+                                              if (response.statusCode == 200) {
+                        var decoded = jsonDecode(response.body);
+                        if (decoded["status"] == "success") {
+                          String token = decoded["data"]["token"];
+                          // store token in shared preferences for later API calls
+                          showsnackbar(context);
+                        } else {
+                          print("Login failed: ${decoded["message"]}");
+                        }
+                      } else {
+                        print("HTTP Error: ${response.statusCode}");
+                      }
+                        }
+                        catch(e){
+                          print(e);
+                        }
+                        } 
+                    },
                     child: Stack(
-                      // mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Align(
                           alignment: Alignment.center,
@@ -326,37 +286,6 @@ class _SchoolLoginState extends State<SchoolLogin>{
               )
               ),
               SizedBox(height: 38,),
-              // Row(
-              //   children: [
-              //     //here every parent provide constraints which gives width here row provides the width
-              //     Expanded(child:LayoutBuilder(builder: (context,Constraints){
-              //         return Flex(direction: Axis.horizontal,
-              //         children:List.generate((Constraints.constrainWidth()/10).floor(), (index)=>
-              //             SizedBox(width: 5,
-              //             height: 2,
-              //             child: DecoratedBox(decoration: BoxDecoration(color: const Color.fromARGB(255, 40, 38, 38))),)
-              //         ),
-              //         );
-              //     })
-              //     ),
-              //     Center(child: Text("Or"),),
-              //     Expanded(child:LayoutBuilder(builder: (context,Constraints){
-              //       return Flex(direction: Axis.horizontal,
-              //       children: List.generate((Constraints.constrainWidth()/15).floor(), (index)=>
-              //         SizedBox(width: 5,
-              //         height: 2,
-              //         child: DecoratedBox(decoration: BoxDecoration(color: const Color.fromARGB(255, 61, 60, 60))),)
-              //       ),);
-              //     })),
-              //   ],
-              // )
-
-              // Row(
-              //   children: [
-              //     Text("------------- --------------------------",style: TextStyle(color: Colors.black),),
-              //     Center(child: Text("Ok",style: TextStyle(color: Colors.black),),),
-              //     Text("---------------",style: TextStyle(color: Colors.black),)
-              //   ],
               Text("- - - - - -  - - - - - - - - - - or -  - - - - - - - - - - - - - - - ",
               style:TextStyle(fontSize:16)),
               SizedBox(height: 16,),

@@ -11,8 +11,6 @@ _CalciState createState()=>_CalciState();
 class _CalciState extends State<Calci>{
  String? enterdValue="";
  int res=0;
- 
-
   @override
   Widget build(BuildContext context){
     return Scaffold(appBar: AppBar(title: Center(child:Text("Calci 📱",style: TextStyle(color: Colors.white,fontSize: 27),)),
@@ -70,7 +68,7 @@ class _CalciState extends State<Calci>{
                 return Center(child:ElevatedButton(onPressed: (){
                   setState(() {
                     if(numbers[index]=="="){
-                      caluclateSum(enterdValue!);
+                      calculateSum(enterdValue!);
                     }
                     else if(numbers[index]=="X"){
                       delete();
@@ -96,80 +94,58 @@ class _CalciState extends State<Calci>{
     );
   }
   void delete(){
+    if(enterdValue!=null || enterdValue!.isNotEmpty){
     setState(() {
     enterdValue=enterdValue!.substring(0,enterdValue!.length-1);
   });
+    }
   }
-  void caluclateSum(String value){
-
-    if(value.contains("/0")){
-      setState(() {
-        res=0;
-      });
-      return;
-    }
-    final expression=value.split(RegExp(r'[+\-*/]'));
-    final operators=RegExp(r'[+\-*/]').allMatches(value).map((m)=>m.group(0)!).toList();
-    int result=int.parse(expression[0]);
-    for(int i=0;i<operators.length;i++){
-      int next=int.parse(expression[i+1]);
-      switch(operators[i]){
-        case '+':
-          result+=next;
-          break;
-        case '-':
-          result-=next;
-          break;
-        case '*':
-          result*=next;
-          break;
-        case '/':
-          result~/=next;
-          break;
-      }
-    }
+  void calculateSum(String value){
+        //so in dart we dont have stack so we use list as stack
+        int result=0;
+        int num=0;
+        List<int> stack=[];
+        String sign='+';
+        for(int i=0;i<value.length;i++){
+          String c=value[i];
+          if(RegExp(r'\d').hasMatch(c)){
+              num=num*10+int.parse(c);
+          }
+          if(!(RegExp(r'\d').hasMatch(c)) ||i==value.length-1){
+            if(sign=='+'){
+              stack.add(num);
+            }
+            else if(sign=='-'){ 
+              stack.add(-num);
+            }
+            else if(sign=='*'){
+              stack.add(stack.removeLast()*num);
+            }
+            else if(sign=='/' ){
+              if(num!=0){
+              stack.add(stack.removeLast()~/num);
+              }
+              else{
+                res=0;
+                return;
+              }
+            }
+            sign=c;
+             num=0;
+          }
+          }
+            for(int i in stack){
+          result+=i;
+        }
+   
       setState(() {
         res=result;
-      });
-      
+      });  
+        }
     }
-  
-
-    // String n1="";
-    // String n2="";
-    // int? j;
-    // if(value.contains("/0")){
-      
-    // }
-    // for(int i=0;i<value.length;i++){
-    //   if(value[i]=="+" || value[i]=='-' || value[i]=='*' || value[i]=="/"){
-    //     j=i;
-    //     break;
-    //   }
-    //   else{
-    //     n1+=value[i];
-    //   }
-    // }
-    // n2=value.substring(j!+1);
-    // if(value[j]=='+'){
-    //   res=int.parse(n1)+int.parse(n2);
-    // }
-    // else if(value[j]=='-'){
-    //   res=int.parse(n1)-int.parse(n2);
-    // }
-    // else if(value[j]=='*'){
-    //   res=int.parse(n1)*int.parse(n2);
-    // }
-    // else if(value[j]=='/'){
-    //   res=(int.parse(n1)/int.parse(n2)).toInt();
-    // }
-    
-    
-  }
-
 List<String> numbers=[
 "1","2","3","+",
 "4","5","6","-",
 "7","8","9","*",
-"0"," /","=","X"
+"0","/","=","X"
 ];
